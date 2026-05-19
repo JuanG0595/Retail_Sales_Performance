@@ -55,5 +55,84 @@ SELECT `Payment Method` FROM retail_store_sales WHERE `Payment Method` LIKE "% "
 SELECT `Location` FROM retail_store_sales WHERE `Location` LIKE "% " OR `Location` LIKE " %";
 SELECT `Discount Applied` FROM retail_store_sales WHERE `Discount Applied` LIKE "% " OR `Discount Applied` LIKE " %";
 
--- Data cleaning process after this point
+-- Data cleaning process after this point.
 
+
+-- remove blank spaces
+
+UPDATE retail_store_sales SET `Category` = TRIM(`Category`);
+UPDATE retail_store_sales SET `Payment Method` = TRIM(`Payment Method`);
+UPDATE retail_store_sales SET `Location` = TRIM(`Location`);
+
+-- Identify spelling errors (grouped by frequency)
+
+SELECT `Category`, COUNT(*) AS Frequency_Category FROM retail_store_sales GROUP BY `Category` ORDER BY `Category`;
+SELECT `Payment Method`, COUNT(*) AS Frequency_pm FROM retail_store_sales GROUP BY `Payment Method` ORDER BY `Payment Method`;
+SELECT `Location`, COUNT(*) AS Frequency_Location FROM retail_store_sales GROUP BY `Location` ORDER BY `Location`;
+
+-- ERRORS CORRECTED SECTION
+
+-- 1. CATEGORY
+
+-- 1.1 FOOD
+
+UPDATE retail_store_sales SET `Category` = "Food" WHERE `Category` IN ("||Food", "Fo");
+
+-- 1.2 MILK PRODUCTS
+
+UPDATE retail_store_sales SET `Category` = "Milk Products" WHERE `Category` IN ("Milk P", "Milk Prod","Milk Ps", "Mlk Prduct","|Milk Prod");
+
+-- 1.3 BEVERAGES
+
+UPDATE retail_store_sales SET `Category` = "Beverages" WHERE `Category`  IN ( "Bev", "Bev/s", "Bevrags","Beve");
+
+-- 1.4 BUTCHERS
+
+UPDATE retail_store_sales SET `Category`= "Butchers" WHERE `Category` IN ("Btche", "Butc", "Butch");
+
+-- 1.5 COMPUTER AND ELECTRIC ACCESSORIES
+
+UPDATE retail_store_sales SET `Category` = "Computers and electric accessories" WHERE `Category` IN ( "Computers $$ electric a", "Computers && electric", "Computers & accessories");
+
+-- 1.6 ELECTRIC HOUSEHOLD ESSENTIALS
+
+UPDATE retail_store_sales SET `Category`= "Electric household essentials" WHERE `Category` IN ("Electric household", "Electric hold essentials", "Electric h");
+
+-- 1.7 FURNITURE
+
+UPDATE retail_store_sales SET `Category`= "Furniture" WHERE `Category` IN ("Furnitur", "Furni", "Frnitu");
+
+-- 1.8 PATISSERIE
+
+UPDATE retail_store_sales SET `Category`= "Patisserie" WHERE `Category` IN ("Patis");
+
+-- 2 PAYMENT METHOD
+
+-- 2.1 CASH
+
+UPDATE retail_store_sales SET`Payment Method` = "Cash" WHERE `Payment Method`IN("C","Ca","Cas");
+
+-- 2.1 CREDIT CARD
+
+UPDATE retail_store_sales SET`Payment Method` = "Credit Card" WHERE `Payment Method`IN ("CC","Cred","Cred C","Cred Card","Credit");
+
+-- 2.1 DIGITAL WALLET
+
+UPDATE retail_store_sales SET`Payment Method` = "Digital Wallet" WHERE `Payment Method`IN ("Dgital Wallt","Dgitl","Digit","Digital","Digital W","Digital Wall","Digtal","DW","Wallt");
+
+-- 3 LOCATION
+
+-- 2.1 IN-STORE
+
+UPDATE retail_store_sales SET `Location` = "In-store" WHERE `Location`IN ("store");
+
+-- 2.2 ONLINE
+
+UPDATE retail_store_sales SET `Location`= "Online" WHERE `Location`IN ("O");
+
+-- Errors Verification
+
+SELECT DISTINCT `Category` FROM retail_store_sales ORDER BY `Category`;
+SELECT DISTINCT `Payment Method` FROM retail_store_sales ORDER BY `Payment Method`;
+SELECT DISTINCT `Location` FROM retail_store_sales ORDER BY `Location`;
+SELECT DISTINCT `Discount Applied` FROM retail_store_sales ORDER BY `Discount Applied`;
